@@ -23,8 +23,8 @@ export default function GestionUsuariosScreen() {
   const mockUsers = [
     { id: 1, name: "Josué Monroy Larios", email: "josue.monroy@sanitek.com", role: "Director", status: "Activo", lastAccess: "Hoy, 10:30 AM" },
     { id: 2, name: "Ana Concepcion", email: "ana.concepcion@sanitek.com", role: "Administrador", status: "Activo", lastAccess: "Ayer, 16:45 PM" },
-    { id: 3, name: "Iker Mejia", email: "iker.mejia@sanitek.com", role: "Gerente", status: "Inactivo", lastAccess: "Hace 1 semana" },
-    { id: 4, name: "Gerardo Landa", email: "gerardo.landa@sanitek.com", role: "Administrador", status: "Activo", lastAccess: "Hace 2 horas" },
+    { id: 3, name: "Iker Mejia", email: "iker.mejia@sanitek.com", role: "Gerente", status: "Activo", lastAccess: "Hace 1 semana" },
+    { id: 4, name: "Gerardo Landa", email: "gerardo.landa@sanitek.com", role: "Administrador", status: "Inactivo", lastAccess: "Hace 2 horas" },
   ];
 
   // logica de filtrado de usuarios 
@@ -50,6 +50,10 @@ export default function GestionUsuariosScreen() {
       <HStack className="mb-8 items-center justify-between">
         <Heading size="xl" className="text-slate-900">Gestión de Usuarios</Heading>
         <HStack space="md">
+          <Button variant="outline" className="border-slate-300 h-10" onPress={() => router.push('/Perfil_Usuario')}>
+            <ButtonText className="text-slate-600">Ver Perfil</ButtonText>
+          </Button>
+
           <Button variant="outline" className="border-slate-300 h-10" onPress={() => router.push('/Suscrpcion')}>
             <ButtonText className="text-slate-600">Ver Suscripción</ButtonText>
           </Button>
