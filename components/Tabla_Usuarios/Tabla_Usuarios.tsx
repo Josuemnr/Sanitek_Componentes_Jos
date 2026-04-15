@@ -6,7 +6,7 @@ import { Feather } from '@expo/vector-icons';
 import React from 'react';
 import { ScrollView } from 'react-native';
 
-interface User { //dto de usuario
+interface User { // dto de usuario
   id: number;
   name: string;
   email: string;
@@ -16,11 +16,12 @@ interface User { //dto de usuario
 }
 
 interface Props {
-  users: User[]; //recibe un arreglo de usuarios
+  users: User[]; // recibe un arreglo de usuarios
   onEditUser: (user: User) => void;
+  onDeleteUser: (user: User) => void; // Ya lo tenías perfecto aquí
 }
 
-export function UserTable({ users, onEditUser }: Props) {
+export function UserTable({ users, onEditUser, onDeleteUser }: Props) {
   // Función interna para los colores
   const obtenerEstiloRol = (rol: string) => {
     switch (rol) {
@@ -31,14 +32,16 @@ export function UserTable({ users, onEditUser }: Props) {
     }
   };
 
-  return ( // Componente principal de la tabla de usuarios
+  return ( 
     <Box className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden flex-1">
+      {/* CABECERA DE LA TABLA */}
       <HStack className="bg-slate-50 p-4 border-b border-slate-200">
         <Text className="flex-1 font-bold text-slate-600 text-xs uppercase tracking-wider">Usuario</Text>
         <Text className="w-32 font-bold text-slate-600 text-xs uppercase tracking-wider">Rol</Text>
         <Text className="w-32 font-bold text-slate-600 text-xs uppercase tracking-wider">Último Acceso</Text>
         <Text className="w-24 font-bold text-slate-600 text-xs uppercase tracking-wider">Estado</Text>
-        <Text className="w-24 font-bold text-slate-600 text-xs uppercase tracking-wider text-center">Acciones</Text>
+        {/* CAMBIO: Columna más ancha (w-44) para que quepan ambos botones */}
+        <Text className="w-44 font-bold text-slate-600 text-xs uppercase tracking-wider text-center">Acciones</Text>
       </HStack>
 
       <ScrollView>
@@ -69,7 +72,9 @@ export function UserTable({ users, onEditUser }: Props) {
               </Box>
             </Box>
             
-            <Box className="w-24 items-center">
+            {/* CAMBIO: Contenedor w-44 con HStack para alinear los dos botones horizontalmente */}
+            <HStack className="w-44 justify-center" space="sm">
+              {/* Botón de Editar */}
               <Pressable 
                 onPress={() => onEditUser(user)}
                 className="flex-row items-center bg-slate-100 px-3 py-2 rounded-lg active:bg-slate-200 hover:bg-slate-200 transition-colors"
@@ -77,9 +82,19 @@ export function UserTable({ users, onEditUser }: Props) {
                 <Feather name={"edit-2" as any} size={14} color="#3b82f6" style={{ marginRight: 4 }} />
                 <Text className="text-blue-500 text-sm font-medium">Editar</Text>
               </Pressable>
-            </Box>
+
+              {/* Botón de Eliminar */}
+              <Pressable 
+                onPress={() => onDeleteUser(user)}
+                className="flex-row items-center bg-red-50 px-3 py-2 rounded-lg active:bg-red-100 hover:bg-red-100 transition-colors"
+              >
+                <Feather name={"trash-2" as any} size={14} color="#ef4444" style={{ marginRight: 4 }} />
+                <Text className="text-red-500 text-sm font-medium">Eliminar</Text>
+              </Pressable>
+            </HStack>
           </HStack>
         ))}
+
         {users.length === 0 && (
           <Box className="p-8 items-center justify-center">
             <Text className="text-slate-400">No hay usuarios con este estado.</Text>

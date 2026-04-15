@@ -10,15 +10,21 @@ import { Link, LinkText } from '@/components/ui/link';
 import { Text } from '@/components/ui/text';
 import { VStack } from '@/components/ui/vstack';
 
+// Importaste tu componente correctamente
+import { PantallaCarga } from '@/components/Estado_Carga/Estado_Carga';
+
 export default function LoginScreen() {
   const router = useRouter();
 
-  // estados para el registro
+  // Estados para el registro
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
 
-  // para la animacion del mundo rotando
+  // Estado para la carga
+  const [isLoading, setIsLoading] = useState(false);
+
+  // Para la animacion del mundo rotando
   const spinValue = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -26,14 +32,14 @@ export default function LoginScreen() {
     Animated.loop(
       Animated.timing(spinValue, {
         toValue: 1,
-        duration: 120000, //se puede cambiar para mas rapido o mas lento
+        duration: 120000, // se puede cambiar para mas rapido o mas lento
         easing: Easing.linear,
         useNativeDriver: true,
       })
     ).start();
   }, []);
 
-  // para convertir el valor de animacion a grados de rotacion
+  // Para convertir el valor de animacion a grados de rotacion
   const spin = spinValue.interpolate({
     inputRange: [0, 1],
     outputRange: ['0deg', '360deg']
@@ -42,26 +48,39 @@ export default function LoginScreen() {
   // Mock de Login
   const handleLogin = () => {
     setErrorMessage('');
+    
     if (!email || !password) {
       setErrorMessage('Por favor, llena todos los campos.');
       return;
     }
-    const mockUsers = [
-      { email: 'femina@sanitek.com', password: 'bonita', role: 'Administrador' }
-    ];
-    const user = mockUsers.find(
-      (u) => u.email === email.toLowerCase().trim() && u.password === password
-    );
-    //redirige a la pagina siguiente
-    if (user) {
-      router.replace('/Gestion_Usuarios'); 
-    } else {
-      setErrorMessage('Correo o contraseña incorrectos.');
-    }
+
+    // 1. Encendemos el estado de carga
+    setIsLoading(true); 
+
+    // 2. Iniciamos el temporizador simulando la base de datos
+    setTimeout(() => {
+      const mockUsers = [
+        { email: 'femina@sanitek.com', password: 'bonita', role: 'Administrador' }
+      ];
+      
+      const user = mockUsers.find(
+        (u) => u.email === email.toLowerCase().trim() && u.password === password
+      );
+      
+      if (user) {
+        // Redirige a la pagina siguiente (No necesitas apagar el loading porque la página cambia)
+        router.replace('/Gestion_Usuarios'); 
+      } else {
+        // MUY IMPORTANTE: Apagamos la carga si hay error para que el usuario pueda intentar de nuevo
+        setIsLoading(false); 
+        setErrorMessage('Correo o contraseña incorrectos.');
+      }
+    }, 1500); // 1500 milisegundos = 1.5 segundos (Aquí cerramos correctamente el setTimeout)
   };
 
   return (
-    <View className="flex-1 bg-slate-950 overflow-hidden">
+    // Agregué 'relative' aquí por si acaso para que la carga cubra bien
+    <View className="flex-1 bg-slate-950 overflow-hidden relative">
       
       {/* IMAGEN DE FONDO ANIMADA (PLANETA ROTANDO) */}
       <Animated.Image
@@ -110,6 +129,7 @@ export default function LoginScreen() {
             <Button 
               className="bg-blue-600 rounded-xl h-14 shadow-lg hover:bg-blue-500 active:bg-blue-700 mt-4 transition-colors"
               onPress={handleLogin}
+              disabled={isLoading} // Deshabilita el botón mientras carga para evitar doble clic
             >
               <ButtonText className="font-semibold italic text-white text-lg">Ingresar al Sistema</ButtonText>
             </Button>
@@ -123,5 +143,10 @@ export default function LoginScreen() {
         </Box>
 
       </View>
+
+      {/* AQUÍ INYECTAMOS TU ORGANISMO: Queda al final para que tape toda la pantalla */}
+      <PantallaCarga isVisible={isLoading} mensaje="Iniciando sesión..." />
+
     </View>
-  )};
+  );
+}
